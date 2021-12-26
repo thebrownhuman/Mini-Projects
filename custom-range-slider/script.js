@@ -1,27 +1,26 @@
-const range = document.getElementById('range')
+const sliders = document.querySelectorAll(".slider-ui");
 
-range.addEventListener('input', (e) => {
-    const value = +e.target.value
-    const label = e.target.nextElementSibling
+sliders.forEach(slider => {
+	let input = slider.querySelector("input[type=range]");
+	let min = input.getAttribute("min");
+	let max = input.getAttribute("max");
+	let valueElem = slider.querySelector(".value");
 
-    const range_width = getComputedStyle(e.target).getPropertyValue('width')
-    const label_width = getComputedStyle(label).getPropertyValue('width')
+	slider.querySelector(".min").innerText = min;
+	slider.querySelector(".max").innerText = max;
 
-    const num_width = +range_width.substring(0, range_width.length - 2)
-    const num_label_width = +label_width.substring(0, label_width.length - 2)
+	function setValueElem() {
+		valueElem.innerText = input.value;
+		let percent = (input.value - min) / (max - min) * 100;
+		valueElem.style.left = percent + "%";
+	}
+	setValueElem();
 
-    const max = +e.target.max
-    const min = +e.target.min
-
-    const left = value * (num_width / max) - num_label_width / 2 + scale(value, min, max, 10, -10)
-
-    label.style.left = `${left}px`
-
-
-    label.innerHTML = value
-})
-
-// https://stackoverflow.com/questions/10756313/javascript-jquery-map-a-range-of-numbers-to-another-range-of-numbers
-const scale = (num, in_min, in_max, out_min, out_max) => {
-    return (num - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-  }
+	input.addEventListener("input", setValueElem);
+	input.addEventListener("mousedown", () => {
+		valueElem.classList.add("up");
+	});
+	input.addEventListener("mouseup", () => {
+		valueElem.classList.remove("up");
+	});
+});
